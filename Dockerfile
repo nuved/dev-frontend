@@ -1,5 +1,9 @@
 FROM node:lts-alpine AS builder
- 
+
+ENV NUXT_API_BASE_URL https://web-api.projectrivers.com
+ENV SHOW_REDIS_SEARCH true
+ENV NODE_ENV production
+
 WORKDIR /usr/src/app
 COPY yarn.lock package.json ./
 
