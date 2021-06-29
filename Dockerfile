@@ -9,5 +9,5 @@ RUN yarn build
 
 FROM nginx:stable-alpine AS runner
 
-COPY --from=builder /usr/src/app/dist /usr/share/nginx/html
+COPY --from=builder /usr/src/app/dist/ /usr/share/nginx/html
 CMD ["nginx", "-g", "daemon off;"]
