@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS builder
+FROM node:14.15.4-alpine3.12 AS builder
 
 ENV NUXT_API_BASE_URL https://web-api.projectrivers.com
 ENV SHOW_REDIS_SEARCH true
