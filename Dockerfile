@@ -1,14 +1,14 @@
 FROM node:lts-alpine AS builder
 
-ENV NUXT_API_BASE_URL https://web-api.projectrivers.com
-ENV SHOW_REDIS_SEARCH true
-ENV NODE_ENV production
+ARG NUXT_API_BASE_URL='https://web-api.projectrivers.com'
+ARG SHOW_REDIS_SEARCH=true
 
 WORKDIR /usr/src/app
 RUN apk add python3 make g++ autoconf automake libtool file pkgconf build-base alpine-sdk nasm
 COPY yarn.lock package.json ./
 RUN yarn install
 COPY . ./
+ARG NODE_ENV=production
 RUN yarn generate
 
 FROM nginx:stable-alpine AS runner
