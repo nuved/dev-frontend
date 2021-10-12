@@ -1,6 +1,7 @@
 FROM node:lts-alpine AS builder
 
-ARG NUXT_API_BASE_URL='https://web-api.projectrivers.com'
+ARG NUXT_API_BASE_URL='https://web.dev.projectrivers.com'
+ARG PROJECT_NAME='LYS'
 ARG SHOW_REDIS_SEARCH=true
 
 WORKDIR /usr/src/app
