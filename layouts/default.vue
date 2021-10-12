@@ -1,3 +1,4 @@
+import { Component } from 'nuxt-property-decorator';
 <template>
   <v-app>
     <CoreNavigationMenu />
@@ -8,12 +9,24 @@
   </v-app>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { Component, Vue } from 'nuxt-property-decorator'
+
+@Component({
   middleware: 'logged',
-  data() {
-    return {}
-  },
+})
+export default class DefaultLayout extends Vue {
+  async fetch() {
+    this.$axios.get('/dev/settings/')
+      .then( ({data}) => {
+        const aaa = data.Result.AppMode
+        console.log(aaa);
+        this.$store.commit('app/SET_APP_MODE', aaa)
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
 }
 </script>
 

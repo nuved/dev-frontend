@@ -18,7 +18,7 @@ export default {
       },
       { hid: 'description', name: 'description', content: '' },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.png' }],
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
@@ -44,10 +44,11 @@ export default {
 
   // https://nuxtjs.org/guide/runtime-config
   publicRuntimeConfig: {
-    everything: process.env, // Do not remove,
-    env: process.env.NODE_ENV, // Do not remove,
-    baseURL: process.env.NUXT_API_BASE_URL, // Do not remove,
+    everything: process.env,
+    env: process.env.NODE_ENV,
+    baseURL: process.env.NUXT_API_BASE_URL,
     showRedisSearch: process.env.SHOW_REDIS_SEARCH,
+    projectName: process.env.PROJECT_NAME
   },
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: {
@@ -66,13 +67,20 @@ export default {
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
     [
-      '@nuxtjs/eslint-module',
+      '@nuxt/typescript-build',
       {
-        fix: true,
-      },
+        ignoreNotFoundWarnings: true
+      }
     ],
-    '@nuxtjs/stylelint-module',
+    // [
+    //   '@nuxtjs/eslint-module',
+    //   {
+    //     fix: true,
+    //   },
+    // ],
+    // '@nuxtjs/stylelint-module',
     '@nuxtjs/vuetify',
+    'nuxt-typed-vuex',
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
@@ -84,13 +92,13 @@ export default {
 
   axios: {
     credentials: true,
-    baseURL: process.env.NUXT_API_BASE_URL || 'https://api.bluconsole.com/',
+    baseURL: process.env.NUXT_API_BASE_URL || ' https://dev-panel.demo.projectrivers.com/',
   },
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
-    optionsPath: '~/plugins/vuetify.options.js',
+    optionsPath: '~/plugins/vuetify.options.ts',
     defaultAssets: false,
     treeShake: true,
   },

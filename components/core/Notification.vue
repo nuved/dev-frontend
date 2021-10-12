@@ -22,24 +22,24 @@
   </v-snackbar>
 </template>
 
-<script>
+<script lang="ts">
 import { mdiClose } from '@mdi/js'
+import { Vue, Component } from 'nuxt-property-decorator';
+import NotificationTypes from '~/interface/notifications'
 
-export default {
-  data() {
-    return {
-      icons: {
-        mdiClose,
-      },
-      show: false,
-      notification: {
-        type: '',
-        message: '',
-      },
-    }
-  },
+@Component
+export default class Notification extends Vue {
+  icons:Object = {
+    mdiClose,
+  }
+  show:Boolean = false
+  notification:NotificationTypes = {
+    type: '',
+    message: ''
+  }
+
   created() {
-    this.$store.subscribe((mutation, state) => {
+    this.$store.subscribe((mutation: any) => {
       if (mutation.type === `app/SHOW_NOTIFICATION`) {
         this.notification = mutation.payload
         this.show = true
@@ -48,7 +48,7 @@ export default {
         this.show = false
       }
     })
-  },
+  }
 }
 </script>
 

@@ -5,10 +5,12 @@ module.exports = {
     node: true,
   },
   parserOptions: {
-    parser: 'babel-eslint',
+    ecmaFeatures: {
+      legacyDecorators: true,
+    },
   },
   extends: [
-    '@nuxtjs',
+    '@nuxtjs/eslint-config-typescript',
     'prettier',
     'prettier/vue',
     'plugin:prettier/recommended',

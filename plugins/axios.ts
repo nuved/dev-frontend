@@ -1,13 +1,15 @@
-export default ({ $axios, $notification, redirect, $auth }) => {
+import { Plugin } from '@nuxt/types'
+
+const axiosPlugin:Plugin = ({ $axios, $notification, redirect, $auth }) => {
   let isRefreshing = false
 
-  $axios.onRequest((config) => {
+  $axios.onRequest((config: any) => {
     if (!isRefreshing) {
       config.headers.Authorization = localStorage.getItem('Token') || ''
     }
   })
 
-  $axios.onResponseError(async (error) => {
+  $axios.onResponseError(async (error: any) => {
     const code = parseInt(error.response && error.response.status)
 
     if (!code) {
@@ -25,7 +27,7 @@ export default ({ $axios, $notification, redirect, $auth }) => {
     switch (code) {
       case 400:
         if (!error.GlobalError && !error.FieldsError) {
-          this.$notification.show({
+          $notification.show({
             type: 'error',
             message: error.response,
           })
@@ -84,3 +86,5 @@ export default ({ $axios, $notification, redirect, $auth }) => {
     }
   })
 }
+
+export default axiosPlugin

@@ -1,16 +1,51 @@
 <template>
   <div>
     <v-app-bar
-      v-if="isMobile"
-      dense
+      app
       fixed
       outlined
       clipped-right
-      color="white"
+      class="app-bar"
+      :class="{
+        'green': $store.state.app.appMode === 'dev',
+        'orange': $store.state.app.appMode === 'demo',
+        'red': $store.state.app.appMode === 'dev'
+      }"
       elevate-on-scroll
     >
       <v-spacer></v-spacer>
-      <v-btn type="button" @click="drawer = !drawer">Menu</v-btn>
+        <h1 class="white--text">
+          {{ $config.projectName }}
+          <v-chip
+            class="ma-2 text-capitalize"
+            label
+            outlined
+            color="white"
+            height="36px"
+          >
+          <span class="app-bar__chip">
+            {{$store.state.app.appMode}}
+          </span>
+          </v-chip>
+
+          <v-chip
+            v-if="false"
+            class="ma-2 white text-capitalize"
+            label
+            height="36px"
+            :class="{
+              'green--text': $store.state.app.appMode === 'dev',
+              'orange--text': $store.state.app.appMode === 'demo',
+              'red--text': $store.state.app.appMode === 'dev'
+            }"
+          >
+          <span class="app-bar__chip">
+            {{$store.state.app.appMode}}
+          </span>
+          </v-chip>
+        </h1>
+      <v-spacer></v-spacer>
+      <v-btn v-if="isMobile" type="button" @click="drawer = !drawer">Menu</v-btn>
     </v-app-bar>
     <v-navigation-drawer
       v-model="drawer"
@@ -25,12 +60,8 @@
     >
       <div class="c-menu__wrapper">
         <div class="c-menu__logo-container">
-          <h1
-            v-show="!configDrawer['mini-variant']"
-            class="m-0 p-0 primary--text"
-          >
-            CoreTrix
-          </h1>
+          <h1 v-show="!configDrawer['mini-variant']" class="m0 primary--text">Dev Panel</h1>
+
           <button
             v-if="!isMobile"
             type="button"
@@ -43,7 +74,7 @@
             @click="
               configDrawer['mini-variant'] = !configDrawer['mini-variant']
             "
-          ></button>
+          />
         </div>
         <v-list dense nav class="c-menu__list">
           <v-list-item
@@ -85,14 +116,17 @@
           v-show="!configDrawer['mini-variant']"
           class="c-version mb-16 mb-lg-0"
         >
-          <span>Dev Panel powered by CoreTrix</span>
+          <!-- <span>Powered by <span class="coretrix__logo--text">CoreTrix</span></span> -->
+          <span class="d-flex align-center">Powered by
+            <v-img class="ml-1" :src="require('~/static/Coretrix_Logo.png')" contain max-width="100" position="left center"></v-img>
+          </span>
         </div>
       </div>
     </v-navigation-drawer>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import {
   mdiPowerStandby,
   mdiViewDashboard,
@@ -101,74 +135,103 @@ import {
   mdiAlertDecagramOutline,
   mdiTable,
 } from '@mdi/js'
-export default {
-  props: {
-    appclass: {
-      type: Object,
-      default: null,
-    },
-  },
-  data() {
-    return {
-      generalMenu: [],
-      intervals: {},
-      configDrawer: {
-        'mobile-breakpoint': this.$vuetify.breakpoint.mobileBreakpoint,
-        width: null,
-        fixed: false,
-        'mini-variant': true,
-        isMobile: true,
-        right: false,
-      },
-      drawer: true,
-      email: localStorage.getItem('userEmail'),
-      icons: {
-        mdiPowerStandby,
-        mdiViewDashboard,
-        mdiSpeedometer,
-        mdiAlertDecagramOutline,
-        mdiPlaylistPlay,
-        mdiTable,
-      },
-    }
-  },
-  computed: {
-    filteredGeneralMenu() {
-      const filteredMenu = this.generalMenu.map((item) => {
-        if (item.iconsSelector) {
-          item.iconsSelector.updateIconData(item)
-        }
-        if (item.resource !== undefined) {
-          item.isVisible = this.$hasPermissions(item.resource, 'read')
-        }
-        return item
-      })
+import {Vue, Component, Watch, Prop, Emit} from 'nuxt-property-decorator'
 
-      return filteredMenu.filter((item) => {
-        return item.isVisible
-      })
-    },
-    isMobile() {
-      return this.$vuetify.breakpoint.mobile
-    },
-    organizationLogo() {
-      return ''
-      // return (
-      //   this.$store.state.localStorage.userData?.Personalization?.Logo ||
-      //   require('~/assets/svg/logo.svg')
-      // )
-    },
-  },
-  watch: {
-    isMobile() {
-      this.updateDrawer()
-    },
-    drawer() {
-      const appClass = Object.assign({}, this.appclass)
-      appClass['bl-menu-drawer-open'] = this.drawer
-      this.$emit('update:appclass', appClass)
-    },
-  },
+type IAppClass = {
+  [key: string]: String | Boolean
+}
+
+@Component
+export default class NavigationMenu extends Vue {
+  @Prop({ default: null }) readonly appclass!: IAppClass
+
+  generalMenu: Object[] = []
+  intervals: Object = {}
+  configDrawer: Object = {
+    'mobile-breakpoint': this.$vuetify.breakpoint.mobileBreakpoint,
+    width: null,
+    fixed: false,
+    'mini-variant': true,
+    isMobile: true,
+    right: false,
+  }
+  drawer: Boolean = true
+  email: string | null = localStorage.getItem('userEmail')
+  icons: Object = {
+    mdiPowerStandby,
+    mdiViewDashboard,
+    mdiSpeedometer,
+    mdiAlertDecagramOutline,
+    mdiPlaylistPlay,
+    mdiTable,
+  }
+
+  get filteredGeneralMenu() {
+    const filteredMenu = this.generalMenu.map((item: any) => {
+      if (item.iconsSelector) {
+        item.iconsSelector.updateIconData(item)
+      }
+      // if (item.resource !== undefined) {
+      //   item.isVisible = this.$auth.$hasPermissions(item.resource, 'read')
+      // }
+      return item
+    })
+
+    return filteredMenu.filter((item) => {
+      return item.isVisible
+    })
+  }
+
+  get isMobile() {
+    return this.$vuetify.breakpoint.mobile
+  }
+
+  get organizationLogo() {
+    return ''
+    // return (
+    //   this.$store.state.localStorage.userData?.Personalization?.Logo ||
+    //   require('~/assets/svg/logo.svg')
+    // )
+  }
+
+
+  @Watch('isMobile')
+  updateDrawer() {
+    if (this.isMobile) {
+      this.configDrawer = {
+        'mobile-breakpoint': this.$vuetify.breakpoint.mobileBreakpoint,
+        width: '320',
+        fixed: true,
+        'mini-variant': false,
+        isMobile: true,
+        right: true,
+      }
+      this.drawer = false
+    } else {
+      this.configDrawer = {
+        'mobile-breakpoint': this.$vuetify.breakpoint.mobileBreakpoint,
+        width: '240',
+        fixed: false,
+        'mini-variant': false,
+        isMobile: false,
+        right: false,
+      }
+      this.drawer = true
+    }
+  }
+
+  @Watch('drawer')
+  watchDrawer() {
+    const appClass:IAppClass = Object.assign({}, this.appclass)
+    appClass['bl-menu-drawer-open'] = this.drawer
+    this.updateAppClass(appClass)
+  }
+
+  @Emit('update:appClass')
+  updateAppClass(e: any) {
+    return e
+  }
+
   created() {
     this.generalMenu = [
       {
@@ -218,36 +281,20 @@ export default {
     }
     this.updateDrawer()
     this.$root.$refs.navigationMenu = this
-  },
-  methods: {
-    updateDrawer() {
-      if (this.isMobile) {
-        this.configDrawer = {
-          'mobile-breakpoint': this.$vuetify.breakpoint.mobileBreakpoint,
-          width: '320',
-          fixed: true,
-          'mini-variant': false,
-          isMobile: true,
-          right: true,
-        }
-        this.drawer = false
-      } else {
-        this.configDrawer = {
-          'mobile-breakpoint': this.$vuetify.breakpoint.mobileBreakpoint,
-          width: '240',
-          fixed: false,
-          'mini-variant': false,
-          isMobile: false,
-          right: false,
-        }
-        this.drawer = true
-      }
-    },
-  },
+  }
 }
 </script>
 
 <style scoped lang="scss">
+::v-deep .app-bar {
+  &.v-app-bar.v-app-bar--fixed {
+    z-index: 22;
+  }
+
+  &__chip {
+    font-size: 22px;
+  }
+}
 .flex-start {
   justify-content: flex-start;
 }
