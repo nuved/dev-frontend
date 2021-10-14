@@ -1,0 +1,19 @@
+variables:
+  TAG_LATEST: $CI_REGISTRY_IMAGE/$APP:latest
+  TAG_COMMIT: $CI_REGISTRY_IMAGE/$APP:$CI_COMMIT_SHORT_SHA
+
+stages:
+  - build
+
+
+build-app:
+  variables:
+    APP: front-dev
+  stage: build
+  environment: dev
+  script:
+    - echo -n $CI_BUILD_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+    - docker pull $TAG_LATEST || true
+    - docker build -t $TAG_LATEST -t $TAG_COMMIT .
+    - docker push $TAG_LATEST
+    - docker push $TAG_COMMIT
