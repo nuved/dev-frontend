@@ -4,6 +4,7 @@ variables:
   DOCKER_TLS_CERTDIR: ""
   DOCKER_HOST: tcp://localhost:2375
   TAG_LATEST: $CI_REGISTRY_IMAGE/$APP:latest
+  TAG_BUILDER: $CI_REGISTRY_IMAGE/$APP:builder
   TAG_COMMIT: $CI_REGISTRY_IMAGE/$APP:$CI_COMMIT_SHORT_SHA
 
 services:
@@ -23,9 +24,19 @@ build-dev:
   script:
     - echo -n $CI_BUILD_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
     - docker pull $TAG_LATEST || true
-    - docker build -t $TAG_LATEST -t $TAG_COMMIT .
+    - docker pull $TAG_BUILDER || true
+    - docker build --target builder \
+       --build-arg BUILDKIT_INLINE_CACHE=1 \ 
+       --cache-from=$TAG_BUILDER
+       --tag $TAG_BUILDER .
+    - docker build --target runner \
+       --build-arg BUILDKIT_INLINE_CACHE=1 \ 
+       --cache-from=$TAG_BUILDER
+       --cache-from=$TAG_LATEST
+       --tag $TAG_LATEST --tag $TAG_COMMIT .
     - docker push $TAG_LATEST
     - docker push $TAG_COMMIT
+    - docker push $TAG_BUILDER
 
 
 
