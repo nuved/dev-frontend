@@ -15,7 +15,7 @@ stages:
   - build
 
 
-build-app:
+build-dev:
   variables:
     APP: front-dev
   stage: build
@@ -24,5 +24,19 @@ build-app:
     - echo -n $CI_BUILD_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
     - docker pull $TAG_LATEST || true
     - docker build -t $TAG_LATEST -t $TAG_COMMIT .
+    - docker push $TAG_LATEST
+    - docker push $TAG_COMMIT
+
+
+
+build-demo:
+  variables:
+    APP: front-demo
+  stage: build
+  environment: demo
+  script:
+    - echo -n $CI_BUILD_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+    - docker pull $TAG_LATEST || true
+    - docker build -t $TAG_LATEST -t $TAG_COMMIT --build-arg NUXT_API_BASE_URL='https://dev-panel.demo.projectrivers.com' .
     - docker push $TAG_LATEST
     - docker push $TAG_COMMIT
