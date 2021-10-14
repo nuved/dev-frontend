@@ -27,12 +27,12 @@ build-dev:
     - docker pull $TAG_BUILDER || true
     - docker build --target builder \
        --build-arg BUILDKIT_INLINE_CACHE=1 \ 
-       --cache-from=$TAG_BUILDER
+       --cache-from=$TAG_BUILDER \
        --tag $TAG_BUILDER .
     - docker build --target runner \
        --build-arg BUILDKIT_INLINE_CACHE=1 \ 
-       --cache-from=$TAG_BUILDER
-       --cache-from=$TAG_LATEST
+       --cache-from=$TAG_BUILDER \
+       --cache-from=$TAG_LATEST \
        --tag $TAG_LATEST --tag $TAG_COMMIT .
     - docker push $TAG_LATEST
     - docker push $TAG_COMMIT
