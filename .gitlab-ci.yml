@@ -39,6 +39,7 @@ build-demo:
   stage: build
   environment: demo
   script:
+    - echo -n $CI_BUILD_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
     - docker pull $TAG_LATEST || true
     - docker pull $TAG_BUILDER || true
     - docker build --target builder --build-arg NUXT_API_BASE_URL='https://dev-panel.demo.projectrivers.com' --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from=$TAG_BUILDER --tag $TAG_BUILDER .
