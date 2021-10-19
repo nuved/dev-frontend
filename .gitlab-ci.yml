@@ -19,6 +19,7 @@ stages:
 build-dev:
   variables:
     APP: front-dev
+    Test: trigger
   stage: build
   environment: dev
   script:
