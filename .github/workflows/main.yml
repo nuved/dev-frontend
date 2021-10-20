@@ -2,6 +2,7 @@ name: GitlabSync
 
 on:
   - push
+  - pull_request
   - delete
 
 jobs:
