@@ -6,9 +6,8 @@ ARG SHOW_REDIS_SEARCH=true
 
 WORKDIR /usr/src/app
 RUN apk add python3 make g++ autoconf automake libtool file pkgconf build-base alpine-sdk nasm
-COPY yarn.lock package.json ./
-RUN yarn install
 COPY . ./
+RUN yarn install
 ARG NODE_ENV=production
 RUN yarn generate
 
