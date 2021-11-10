@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS builder
+FROM node:14.15.4-alpine3.12 AS builder
 
 ARG NUXT_API_BASE_URL='https://dev-panel.dev.lys.ice.global'
 ARG PROJECT_NAME='LYS'
