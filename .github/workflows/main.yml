@@ -4,6 +4,9 @@ on:
   - push
   - pull_request
   - delete
+  - repository_dispatch
+  - workflow_dispatch
+
 
 jobs:
   sync:
