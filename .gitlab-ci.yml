@@ -22,7 +22,6 @@ build-dev:
     APP: front-dev
     Test: trigger
   stage: build
-  environment: dev
   script:
     - echo -n $CI_BUILD_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
     - docker pull $TAG_LATEST || true
@@ -39,7 +38,6 @@ build-demo:
   variables:
     APP: front-demo
   stage: build
-  environment: demo
   script:
     - echo -n $CI_BUILD_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
     - docker pull $TAG_LATEST || true
@@ -49,3 +47,33 @@ build-demo:
     - docker push $TAG_LATEST
     - docker push $TAG_COMMIT
     - docker push $TAG_BUILDER
+    
+    
+build-fedshi-dev:
+  variables:
+    APP: front-fedshi-dev
+  stage: build
+  script:
+    - echo -n $CI_BUILD_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+    - docker pull $TAG_LATEST || true
+    - docker pull $TAG_BUILDER || true
+    - docker build --target builder --build-arg NUXT_API_BASE_URL='https://dev-panel-api.dev.fedshi.ice.global' --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from=$TAG_BUILDER --tag $TAG_BUILDER .
+    - docker build --target runner  --build-arg NUXT_API_BASE_URL='https://dev-panel-api.dev.fedshi.ice.global' --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from=$TAG_BUILDER --cache-from=$TAG_LATEST --tag $TAG_LATEST --tag $TAG_COMMIT .
+    - docker push $TAG_LATEST
+    - docker push $TAG_COMMIT
+    - docker push $TAG_BUILDER
+
+build-fedshi-demo:
+  variables:
+    APP: front-fedshi-demo
+  stage: build
+  script:
+    - echo -n $CI_BUILD_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+    - docker pull $TAG_LATEST || true
+    - docker pull $TAG_BUILDER || true
+    - docker build --target builder --build-arg NUXT_API_BASE_URL='https://dev-panel-api.demo.fedshi.ice.global' --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from=$TAG_BUILDER --tag $TAG_BUILDER .
+    - docker build --target runner  --build-arg NUXT_API_BASE_URL='https://dev-panel-api.demo.fedshi.ice.global' --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from=$TAG_BUILDER --cache-from=$TAG_LATEST --tag $TAG_LATEST --tag $TAG_COMMIT .
+    - docker push $TAG_LATEST
+    - docker push $TAG_COMMIT
+    - docker push $TAG_BUILDER
+
