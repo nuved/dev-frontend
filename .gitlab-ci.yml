@@ -2,7 +2,7 @@ image: docker:19.03.13
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
-  Novid: "2"
+  Novid: "3"
   DOCKER_HOST: tcp://localhost:2375
   TAG_LATEST: $CI_REGISTRY_IMAGE/$APP:latest
   TAG_BUILDER: $CI_REGISTRY_IMAGE/$APP:builder
