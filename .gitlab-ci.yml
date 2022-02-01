@@ -48,7 +48,7 @@ build-demo:
     - docker push $TAG_COMMIT
     - docker push $TAG_BUILDER
     
- build-lys-prod:
+build-lys-prod:
   variables:
     APP: front-lys-prod
   stage: build
@@ -61,7 +61,7 @@ build-demo:
     - docker push $TAG_LATEST
     - docker push $TAG_COMMIT
     - docker push $TAG_BUILDER
-   
+
     
     
 build-fedshi-dev:
